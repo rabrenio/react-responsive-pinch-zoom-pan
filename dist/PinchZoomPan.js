@@ -694,7 +694,7 @@ function (_React$Component) {
   }, {
     key: "controlOverscrollViaCss",
     get: function get() {
-      return CSS && CSS.supports('touch-action', 'pan-up');
+      return window.CSS && window.CSS.supports('touch-action', 'pan-up');
     }
   }], [{
     key: "getDerivedStateFromProps",
