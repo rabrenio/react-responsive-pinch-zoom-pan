@@ -23,8 +23,8 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "react": "^16.3.0",
-    "react-dom": "^16.3.0"
+    "react": "^16.3.0 || ^17 || ^18",
+    "react-dom": "^16.3.0 || ^17 || ^18"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
