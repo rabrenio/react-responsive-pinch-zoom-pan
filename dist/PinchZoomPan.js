@@ -13,8 +13,6 @@ var _reselect = require("reselect");
 
 var _warning = _interopRequireDefault(require("warning"));
 
-var _ZoomButtons = _interopRequireDefault(require("./ZoomButtons"));
-
 var _StateDebugView = _interopRequireDefault(require("./StateDebugView"));
 
 var _Utils = require("./Utils");
@@ -88,7 +86,7 @@ var imageOverflow = (0, _reselect.createSelector)(function (state) {
 var browserPanActions = (0, _reselect.createSelector)(imageOverflow, function (imageOverflow) {
   //Determine the panning directions where there is no image overflow and let
   //the browser handle those directions (e.g., scroll viewport if possible).
-  //Need to replace 'pan-left pan-right' with 'pan-x', etc. otherwise 
+  //Need to replace 'pan-left pan-right' with 'pan-x', etc. otherwise
   //it is rejected (o_O), therefore explicitly handle each combination.
   var browserPanX = !imageOverflow.left && !imageOverflow.right ? 'pan-x' //we can't pan the image horizontally, let the browser take it
   : !imageOverflow.left ? 'pan-left' : !imageOverflow.right ? 'pan-right' : '';
@@ -160,7 +158,7 @@ function (_React$Component) {
         var requestedPan = _this.pan(touches[0]);
 
         if (!_this.controlOverscrollViaCss) {
-          //let the browser handling panning if we are at the edge of the image in 
+          //let the browser handling panning if we are at the edge of the image in
           //both pan directions, or if we are primarily panning in one direction
           //and are at the edge in that directino
           var overflow = imageOverflow(_this.state);
@@ -722,10 +720,7 @@ PinchZoomPan.defaultProps = {
   maxScale: 1,
   position: 'topLeft',
   zoomButtons: true,
-  doubleTapBehavior: 'reset',
-  renderZoomButtons: function renderZoomButtons(props) {
-    return _react.default.createElement(_ZoomButtons.default, props);
-  }
+  doubleTapBehavior: 'reset'
 };
 PinchZoomPan.propTypes = {
   children: _propTypes.default.element.isRequired,

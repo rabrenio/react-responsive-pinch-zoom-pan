@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { createSelector } from 'reselect';
 import warning from 'warning';
 
-import ZoomButtons from './ZoomButtons'
 import DebugView from './StateDebugView';
 
 import { snapToTarget, negate, constrain, getPinchLength, getPinchMidpoint, getRelativePosition, setRef, isEqualDimensions, getDimensions, getContainerDimensions, isEqualTransform, getAutofitScale, getMinScale, tryCancelEvent, getImageOverflow } from './Utils';
@@ -37,27 +36,27 @@ const imageOverflow = createSelector(
     state => state.scale,
     state => state.imageDimensions,
     state => state.containerDimensions,
-    (top, left, scale, imageDimensions, containerDimensions) => { 
+    (top, left, scale, imageDimensions, containerDimensions) => {
         if (!isInitialized(top, left, scale)) {
             return '';
-        } 
+        }
         return getImageOverflow(top, left, scale, imageDimensions, containerDimensions);
     }
 );
 
 const browserPanActions = createSelector(
     imageOverflow,
-    (imageOverflow) => { 
+    (imageOverflow) => {
         //Determine the panning directions where there is no image overflow and let
         //the browser handle those directions (e.g., scroll viewport if possible).
-        //Need to replace 'pan-left pan-right' with 'pan-x', etc. otherwise 
+        //Need to replace 'pan-left pan-right' with 'pan-x', etc. otherwise
         //it is rejected (o_O), therefore explicitly handle each combination.
-        const browserPanX = 
+        const browserPanX =
             !imageOverflow.left && !imageOverflow.right ? 'pan-x' //we can't pan the image horizontally, let the browser take it
             : !imageOverflow.left ? 'pan-left'
             : !imageOverflow.right ? 'pan-right'
             : '';
-        const browserPanY = 
+        const browserPanY =
             !imageOverflow.top && !imageOverflow.bottom ? 'pan-y'
             : !imageOverflow.top ? 'pan-up'
             : !imageOverflow.bottom ? 'pan-down'
@@ -107,7 +106,7 @@ export default class PinchZoomPan extends React.Component {
             const requestedPan = this.pan(touches[0]);
 
             if (!this.controlOverscrollViaCss) {
-                //let the browser handling panning if we are at the edge of the image in 
+                //let the browser handling panning if we are at the edge of the image in
                 //both pan directions, or if we are primarily panning in one direction
                 //and are at the edge in that directino
                 const overflow = imageOverflow(this.state);
@@ -186,7 +185,7 @@ export default class PinchZoomPan extends React.Component {
     }
 
     handleImageLoad = event => {
-        this.debug('handleImageLoad'); 
+        this.debug('handleImageLoad');
         this.isImageLoaded = true;
         this.maybeHandleDimensionsChanged();
 
@@ -207,7 +206,7 @@ export default class PinchZoomPan extends React.Component {
     }
 
     handleWindowResize = () => this.maybeHandleDimensionsChanged();
-    
+
     handleRefImage = ref => {
         if (this.imageRef) {
             this.cancelAnimation();
@@ -321,7 +320,7 @@ export default class PinchZoomPan extends React.Component {
             const containerDimensions = getContainerDimensions(this.imageRef);
             const imageDimensions = getDimensions(this.imageRef);
 
-            if (!isEqualDimensions(containerDimensions, getDimensions(this.state.containerDimensions)) || 
+            if (!isEqualDimensions(containerDimensions, getDimensions(this.state.containerDimensions)) ||
                 !isEqualDimensions(imageDimensions, getDimensions(this.state.imageDimensions))) {
                 this.cancelAnimation();
 
@@ -329,7 +328,7 @@ export default class PinchZoomPan extends React.Component {
                 this.setState({
                         containerDimensions,
                         imageDimensions
-                    }, 
+                    },
                     () => {
                         //When image loads and image dimensions are first established, apply initial transform.
                         //If dimensions change, constraints change; current transform may need to be adjusted.
@@ -415,7 +414,7 @@ export default class PinchZoomPan extends React.Component {
     //Returns constrained transform when requested transform is outside constraints with tolerance, otherwise returns null
     getCorrectedTransform(requestedTransform, tolerance) {
         const scale = this.getConstrainedScale(requestedTransform.scale, tolerance);
-        
+
         //get dimensions by which scaled image overflows container
         const negativeSpace = this.calculateNegativeSpace(scale);
         const overflow = {
@@ -428,12 +427,12 @@ export default class PinchZoomPan extends React.Component {
         const { position, initialTop, initialLeft } = this.props;
         const { imageDimensions, containerDimensions } = this.state;
         const upperBoundFactor = 1.0 + tolerance;
-        const top = 
+        const top =
             overflow.height ? constrain(negate(overflow.height) * upperBoundFactor, overflow.height * upperBoundFactor - overflow.height, requestedTransform.top)
             : position === 'center' ? (containerDimensions.height - (imageDimensions.height * scale)) / 2
             : initialTop || 0;
 
-        const left = 
+        const left =
             overflow.width ? constrain(negate(overflow.width) * upperBoundFactor, overflow.width * upperBoundFactor - overflow.width, requestedTransform.left)
             : position === 'center' ? (containerDimensions.width - (imageDimensions.width * scale)) / 2
             : initialLeft || 0;
@@ -506,7 +505,7 @@ export default class PinchZoomPan extends React.Component {
             : undefined;
 
         const containerStyle = {
-            width: '100%', 
+            width: '100%',
             height: '100%',
             overflow: 'hidden',
             touchAction: touchAction,
@@ -548,7 +547,7 @@ export default class PinchZoomPan extends React.Component {
     static getDerivedStateFromProps(nextProps, prevState) {
         if (nextProps.initialTop !== prevState.initialTop ||
             nextProps.initialLeft !== prevState.initialLeft ||
-            nextProps.initialScale !== prevState.initialScale || 
+            nextProps.initialScale !== prevState.initialScale ||
             nextProps.position !== prevState.position) {
             return {
                 position: nextProps.position,
@@ -606,7 +605,7 @@ export default class PinchZoomPan extends React.Component {
     }
 
     debug(message) {
-        if (this.props.debug) {    
+        if (this.props.debug) {
             console.log(message);
         }
     }
@@ -618,10 +617,7 @@ PinchZoomPan.defaultProps = {
     maxScale: 1,
     position: 'topLeft',
     zoomButtons: true,
-    doubleTapBehavior: 'reset',
-    renderZoomButtons: props => (
-        <ZoomButtons {...props} />
-    ),
+    doubleTapBehavior: 'reset'
 };
 
 PinchZoomPan.propTypes = {
